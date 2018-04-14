@@ -13,6 +13,9 @@ using Eigen::VectorXd;
 class UKF {
 public:
 
+  // previous timestamp
+  long long previous_timestamp_;
+
   ///* initially set to false, set to true in first call of ProcessMeasurement
   bool is_initialized_;
 
@@ -67,7 +70,14 @@ public:
   ///* Sigma point spreading parameter
   double lambda_;
 
+  // Noise matrices
+  MatrixXd R_radar;
+  MatrixXd R_laser;
 
+  //create sigma point matrix
+  MatrixXd Xsig_aug_;
+
+  double lambda;
   /**
    * Constructor
    */
@@ -82,7 +92,7 @@ public:
    * ProcessMeasurement
    * @param meas_package The latest measurement data of either radar or laser
    */
-  void ProcessMeasurement(MeasurementPackage meas_package);
+  void ProcessMeasurement(MeasurementPackage measurement_pack);
 
   /**
    * Prediction Predicts sigma points, the state, and the state covariance
@@ -95,13 +105,28 @@ public:
    * Updates the state and the state covariance matrix using a laser measurement
    * @param meas_package The measurement at k+1
    */
-  void UpdateLidar(MeasurementPackage meas_package);
+  void UpdateLidar(MeasurementPackage measurement_pack);
 
   /**
    * Updates the state and the state covariance matrix using a radar measurement
    * @param meas_package The measurement at k+1
    */
-  void UpdateRadar(MeasurementPackage meas_package);
+  void UpdateRadar(MeasurementPackage measurement_pack);
+
+  /**
+   * Generate the Sigma points
+   */
+  void GenerateSigmaPoints(MatrixXd* Xsig_out);
+
+  void AugmentedSigmaPoints();
+
+  void SigmaPointPrediction(float delta_t);
+
+  void PredictMeanAndCovariance();
+
+  void UpdateRadarMeasurement(MeasurementPackage measurement_pack);
+
+  void UpdateLidarMeasurement(MeasurementPackage measurement_pack);
 };
 
 #endif /* UKF_H */

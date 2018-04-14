@@ -2,7 +2,9 @@
 #include <iostream>
 #include "json.hpp"
 #include <math.h>
+
 #include "ukf.h"
+
 #include "tools.h"
 
 using namespace std;
@@ -32,7 +34,6 @@ int main()
 
   // Create a Kalman Filter instance
   UKF ukf;
-
   // used to compute the RMSE later
   Tools tools;
   vector<VectorXd> estimations;
@@ -105,9 +106,10 @@ int main()
     	  gt_values(3) = vy_gt;
     	  ground_truth.push_back(gt_values);
           
+
           //Call ProcessMeasurment(meas_package) for Kalman filter
     	  ukf.ProcessMeasurement(meas_package);    	  
-
+    	  cout<<"ProcessMeasurement Done..."<<endl;
     	  //Push the current estimated x,y positon from the Kalman filter's state vector
 
     	  VectorXd estimate(4);
@@ -125,6 +127,7 @@ int main()
     	  estimate(2) = v1;
     	  estimate(3) = v2;
     	  
+    	  cout<<"estimations..."<<endl;
     	  estimations.push_back(estimate);
 
     	  VectorXd RMSE = tools.CalculateRMSE(estimations, ground_truth);
